@@ -47,14 +47,9 @@ export const Shader = {
         } 
 
 
-        void main () {            
-            vec2 uv = vec2(iResolution.x/iResolution.y * vTextureCoord.x, vTextureCoord.y);
-            uv = uv * 10.;
-
-            float m = 0.;
-
+        float Layer(vec2 uv) {
+            float m = 0.; 
             vec2 gv = fract(uv)-.5; 
-
             vec2 id = floor(uv); 
 
             vec2 a0 = vec2(0.);
@@ -112,7 +107,7 @@ export const Shader = {
                         j = (a8-gv)*25.;
                     }
 
-                    m += 1./dot(j, j) * (sin(t) + 1.);
+                    m += 1./dot(j, j) * (sin(t)*1. + 1.);
                     i++;
                 }
             }
@@ -132,6 +127,18 @@ export const Shader = {
             m += Line(gv, a7, a3);
             m += Line(gv, a7, a5);
 
+            return m;
+        }
+
+
+        void main () {            
+            vec2 uv = vec2(iResolution.x/iResolution.y * vTextureCoord.x, vTextureCoord.y);
+        
+            float m = 0.; 
+            
+            for (float i=0.; i<1.; i+=1./4.) {
+                m += Layer(uv*10.*i);
+            }
 
             vec3 col = vec3(m);
 
