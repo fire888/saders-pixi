@@ -132,15 +132,28 @@ export const Shader = {
 
 
         void main () {            
-            vec2 uv = vec2(iResolution.x/iResolution.y * vTextureCoord.x, vTextureCoord.y);
-        
+            vec2 uv = vec2(iResolution.x/iResolution.y * vTextureCoord.x, vTextureCoord.y) - .5;
+            float t = iTime * .1;
+            
+            float s = sin(t);
+            float c = cos(t);
+            mat2 rot = mat2(s, -c, c, s);
+            uv *= rot;   
+
             float m = 0.; 
+
             
             for (float i=0.; i<1.; i+=1./4.) {
-                m += Layer(uv*10.*i);
+                float z = fract(i * t);
+                float size = mix(10., 5., z);
+                float fade = S(0., .5, z);
+                m += Layer(uv*size + i * 20.) * fade;
             }
 
-            vec3 col = vec3(m);
+            vec3 base = sin(t*vec3(3.45, 6.67, 7.85))*.4 + .6;
+            float gradient = uv.y;
+            
+            vec3 col = base*m - gradient*base;
 
 
             //if (gv.x>.48 || gv.y>.48) col = vec3(1., 0., 0.);
