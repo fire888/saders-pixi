@@ -1,8 +1,27 @@
+import texture from './assets/s1200.jpg'
+
 import * as PIXI from 'pixi.js-legacy'
- import { Shader } from './Shaders/Sky'
+
+//import { Shader } from './Shaders/Stars'
+//import { Shader } from './Shaders/Stars2'
+//import { Shader } from './Shaders/StarsN'
+//import { Shader } from './Shaders/StarSingle'
+//import { Shader } from './Shaders/StarSingle2'
+//import { Shader } from './Shaders/StarsStay'
+
+//import { Shader } from './Shaders/SphereIce'
+import { Shader } from './Shaders/TextureWaves'
+
+
+//import { Shader } from './Shaders/CubicNoise'
+//import { Shader } from './Shaders/Voronoi'
+//import { Shader } from './Shaders/Water'
+//import { Shader } from './Shaders/Sky'
 //import { Shader } from './Shaders/Toroid'
 
 const initApp = () => {
+  let image = PIXI.Texture.from(texture);
+
   const app = new PIXI.Application({
     width: window.innerWidth, 
     height: window.innerHeight, 
@@ -16,6 +35,9 @@ const initApp = () => {
   graphics.beginFill(0x000000)
   graphics.drawRect(0, 0, window.innerWidth, window.innerHeight)
   graphics.endFill()
+
+
+  Shader.uniforms.iChannel0 = image
 
   const filter = new PIXI.Filter(null, Shader.fragmentShader, Shader.uniforms)
   graphics.filters = [filter]
