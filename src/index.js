@@ -1,5 +1,6 @@
 import * as PIXI from 'pixi.js-legacy'
-import { Shader } from './Shaders/Shader'
+ import { Shader } from './Shaders/Sky'
+//import { Shader } from './Shaders/Toroid'
 
 const initApp = () => {
   const app = new PIXI.Application({
