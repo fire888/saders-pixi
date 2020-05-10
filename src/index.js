@@ -6,6 +6,9 @@ import texture from './assets/s1200.jpg'
 
 import * as PIXI from 'pixi.js-legacy'
 
+//import { Shader } from './Shaders/Rainbow'
+import { Shader } from './Shaders/Rainbow2'
+
 //import { Shader } from './Shaders/Stars'
 //import { Shader } from './Shaders/Stars2'
 //import { Shader } from './Shaders/StarsN'
@@ -14,7 +17,7 @@ import * as PIXI from 'pixi.js-legacy'
 //import { Shader } from './Shaders/StarsStay'
 
 //import { Shader } from './Shaders/SphereIce'
-import { Shader } from './Shaders/TextureWaves'
+//import { Shader } from './Shaders/TextureWaves'
 
 
 //import { Shader } from './Shaders/CubicNoise'
