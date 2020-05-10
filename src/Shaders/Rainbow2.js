@@ -58,7 +58,7 @@ export const Shader = {
             for (int i = 0; i < 20; i++) {
                 offsetY += .05;
                 offsetX += sin(765.75 * (offsetX)) * 0.1;
-                float star_size = uv.y +.7;
+                float star_size = (uv.y +.7) * .3;
                 vec3 star_color = vec3(abs(sin(iTime)), 0.2, abs(cos(iTime))) * star_luminosity;
                 col += draw_star(
                         vec2(uv.x + offsetX -.1, fract((uv.y + offsetY)  + t)), 
