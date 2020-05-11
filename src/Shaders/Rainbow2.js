@@ -34,11 +34,11 @@ float hash(vec2 p) {
 }
 
 
-vec3 drawStartArea (vec2 pos, vec3 col) {
+vec3 drawStartArea (vec2 pos, vec3 col, float size) {
     pos.y -=.5;
     pos.x *=.3;
 
-    float d = length(pos);
+    float d = length(pos) / size;
     float ds = smoothstep(.145, .08, d);
     //return vec3(.7, .8, .9)*d*ds;
     return col*ds;
@@ -48,17 +48,20 @@ vec3 drawStartArea (vec2 pos, vec3 col) {
 void main () {
     float t =iTime*0.5;
     float ratio = iResolution.x/iResolution.y;   
-    //vec2 uv = vec2(iResolution.x/iResolution.y * vTextureCoord.x - 1., vTextureCoord.y);    
-    vec2 uv = vec2(vTextureCoord.x - .5, vTextureCoord.y -.5);   
+    vec2 uv = vec2(ratio * vTextureCoord.x -.5, vTextureCoord.y  -.5);      
     uv *= 1.;
     
     uv.y -= 1./3.;
 
 
     vec3 col;
+
+    float tFallowArea = min( max(sin(t*3. + .1), sin(t*3. - .1)) + 1., 1.);
     
+    float tFallowStars = tFallowArea -.3;   
     float offsetY = 0.;
     float offsetX = .06;
+
 
     float addToX = .3;
     
@@ -66,7 +69,7 @@ void main () {
         offsetY += .05;
         addToX += .4434;
         offsetX += sin(fract((offsetX + addToX) * 123.45) * 234.45) * .07;
-        float star_size = (uv.y +.7) * 0.7;
+        float star_size = max((uv.y +.7) * 0.7 * tFallowStars, 0.);
         vec3 star_color = vec3(abs(sin(iTime)), 0.2, abs(cos(iTime))) * star_luminosity;
         col += draw_star(
                 vec2(uv.x + offsetX, fract((uv.y + offsetY) + t)), 
@@ -76,8 +79,8 @@ void main () {
 
     col *= step(uv.y, 0.); 
 
-
-    col += drawStartArea(vec2(uv.x, uv.y + .5), vec3(abs(sin(iTime)), 0.2, abs(cos(iTime))) * star_luminosity);
+    float areaSize = 1. * tFallowArea;
+    col += drawStartArea(vec2(uv.x, uv.y + .5), vec3(abs(sin(iTime)), 0.2, abs(cos(iTime))) * star_luminosity, areaSize);
 
     gl_FragColor = texture2D(uSampler, vTextureCoord) + vec4(col, 1.);
 }`,
