@@ -1,3 +1,5 @@
+var SPECTOR = require("spectorjs");
+
 import texture from './assets/s1200.jpg'
 
 import * as PIXI from 'pixi.js-legacy'
@@ -23,6 +25,9 @@ import { Shader } from './Shaders/Rainbow2'
 //import { Shader } from './Shaders/Toroid'
 
 const initApp = () => {
+  var spector = new SPECTOR.Spector();
+  spector.displayUI();
+
   let image = PIXI.Texture.from(texture);
 
   const app = new PIXI.Application({
