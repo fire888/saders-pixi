@@ -1,4 +1,6 @@
 export const Shader = { fragmentShader: `
+precision lowp int;
+
 varying vec2 vTextureCoord;
 uniform sampler2D uSampler;
 uniform float iTime;

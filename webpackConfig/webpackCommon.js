@@ -4,7 +4,7 @@ const webpack = require('webpack')
 const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
-	entry: './src/index.js',
+	entry: './src/fishes.js',
 	module: {
 		rules: [
       { test: /\.txt$/, use: 'raw-loader' },
