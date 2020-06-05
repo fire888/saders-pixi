@@ -10,10 +10,9 @@ const h = 10
 
 
 export function generatePositions () {
-    const arrPoseD = generatePosesLetter(D, (-D.length) / 2 * w - 200)
-    const arrPoseN = generatePosesLetter(N, (-N.length) / 2 * w)
-    const arrPoseO = generatePosesLetter(O, (-D.length) / 2 * w + 200)
-
+    const arrPoseD = generatePosesLetter(D, (-D[0].length) / 2 * w - 200)
+    const arrPoseN = generatePosesLetter(N, (-N[0].length) / 2 * w)
+    const arrPoseO = generatePosesLetter(O, (-D[0].length) / 2 * w + 200)
     return [].concat(arrPoseD, arrPoseN, arrPoseO)
 }
 
