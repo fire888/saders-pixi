@@ -1,5 +1,7 @@
 import * as PIXI from 'pixi.js-legacy'
 import KEY_IMG from './assets/az-fish.png'
+import { generatePositions } from './Fishes/generatePositions'
+
 
 document.title = 'Ocean'
 
@@ -13,23 +15,20 @@ class BackgroundEffect {
 }
 
 
-const NUM_FISH = 80
-const H = 1
-
+const FULL_TICK = 1000
 
 class Fishes {
     constructor() {
         this.container = new PIXI.Container()
 
-        this.arrFishes = []
-        for (let i = 0; i < NUM_FISH; i ++) {
-            const fish = new Fish(this.container, 'left')
-            this.container.addChild(fish.container)
-            this.arrFishes.push(fish)
-        }
+        this._tick = 0
+        this._canMove = true
 
-        for (let i = 0; i < NUM_FISH; i ++) {
-            const fish = new Fish(this.container, 'right')
+        this.arrFishes = []
+
+        const arrPoses = generatePositions()
+        for (let i = 0; i < arrPoses.length; i ++) {
+            const fish = new Fish(this.container, arrPoses[i])
             this.container.addChild(fish.container)
             this.arrFishes.push(fish)
         }
@@ -42,136 +41,116 @@ class Fishes {
         animate()
     }
 
-    _update (data) {
-        this.arrFishes.forEach(item => item.update())
+    _update(data) {
+        if (this._tick > FULL_TICK * 2) {
+            this._tick = 0
+            this.arrFishes.forEach(item => item.initSpd())
+        }
+
+
+        if (this._canMove) {
+            this._tick ++
+        }
+
+        const noMove = this._tick === FULL_TICK
+        this.arrFishes.forEach(item => item.update(noMove))
+
+        if (noMove && this._canMove) {
+            this._canMove = false
+            setTimeout(() => this._canMove = true, 50)
+        }
     }
 }
 
 
+const wApp = window.innerWidth
+const maxX = wApp / 2
+const minX = -maxX
+
 class Fish {
-    constructor(cont, area) {
+    constructor(cont, targetPos) {
         this.parent = cont
-        this.area = area
+        this._targetPos = targetPos
         this.moveForvard = true
 
-        this.wApp = window.innerWidth
-        this.halfWApp = this.wApp / 2
-        this.hApp = window.innerHeight
-        this.h = this.hApp * H
 
-        this.maxX = this.wApp / 2 + 250
-        this.minX = -this.maxX
-        this.maxY = this.hApp / 2 * H
-        this.minY = -this.maxY
+        this.phase = Math.random() * 80
+        this._orient = Math.random() < 0.5 ? -1 : 1
 
-        this.phase = Math.random() * 100
-
-        this.points = []
         const len = 5
-        const dist = 50
+        const dist = 70
         this.step = dist / len
 
+        this.points = []
         for (let i = 0; i < len; i++) {
             this.points.push(new PIXI.Point(this.step * i, 0))
         }
 
-
         const spr = new PIXI.SimpleRope(PIXI.Texture.from(KEY_IMG), this.points)
+
         spr.alpha = 0.9
         spr.scale.set(0.5 + Math.random() * 0.2)
 
-        if (this.area === 'left') {
-            spr.x = this.minX * Math.random()
+        if (this._orient === -1) {
+            spr.x = maxX * (Math.random()* 0.8 + 0.1)
         }
 
-        if (this.area === 'right') {
-            spr.x = this.maxX * Math.random()
+        if (this._orient === 1) {
+            spr.scale.x *= -1
+            spr.x = minX * (Math.random() * 0.8 + 0.1)
         }
 
-        spr.y = Math.random() * 200 * (Math.random() < 0.5 ? 1 : -1)
+        spr.y = this._targetPos.y + (Math.random() * 150 - 75)
+        this._spd = [0, 0]
 
         this.container = spr
 
-        this.initNewTarget()
+        this.initSpd()
 
     }
 
-    update() {
-        this.container.x += this.speeds[0]
-        this.container.y += this.speeds[1]
+    initSpd() {
+        this.container.scale.x *= -1
+        this.container.x += Math.sign(this.container.scale.x) * (-40)
 
-        this.phase += this.spd / 5
+        this._spd[0] = (this._targetPos.x - this.container.x  + (Math.sign(this.container.scale.x) * (-20))) / FULL_TICK
+        this._spd[1] = (this._targetPos.y - this.container.y) / FULL_TICK
 
-        for (let i = 0; i < this.points.length; i ++) {
+        this._spdPhase = 0.1 + Math.sqrt(Math.pow(this._spd[0], 2) * Math.pow(this._spd[1], 2)) * 2
+    }
+
+    update(noMove) {
+        this.phase += this._spdPhase
+
+        for (let i = 0; i < this.points.length; i++) {
             this.points[i].y = Math.sin(this.phase + i) * (this.points.length - 1 - i)
         }
 
-        if (
-            Math.abs(this.container.x - this.targetPoint[0]) < 15
-            && Math.abs(this.container.y - this.targetPoint[1]) < 15
-        ) {
-            this.initNewTarget()
-        }
+        if (noMove) return;
+
+        this.container.x += this._spd[0]
+        this.container.y += this._spd[1]
     }
 
-
-    initNewTarget () {
-        this.moveForvard = !this.moveForvard
-
-        let targetX
-        if (this.area === 'left') {
-            if (this.moveForvard) {
-                targetX = this.maxX
-            }
-            if (!this.moveForvard) {
-                targetX = this.minX
-            }
-        }
-
-        if (this.area === 'right') {
-            if (this.moveForvard) {
-                targetX = this.minX
-            }
-            if (!this.moveForvard) {
-                targetX = this.maxX
-            }
-        }
-
-
-        this.targetPoint = [
-            targetX,
-            Math.random() * 200 * (Math.random() < 0.5 ? 1 : -1),
-        ]
-
-        const distX = this.targetPoint[0] - this.container.x
-        const distY = this.targetPoint[1] - this.container.y
-        const dist = Math.sqrt((distX * distX) + (distY * distY))
-
-        this.spd = Math.random() + 0.1
-
-        this.speeds = [
-            distX/dist * this.spd,
-            distY/dist * this.spd,
-        ]
-
-        this.container.scale.x = this.speeds[0] >= 0 ? 1 : -1
-    }
 }
 
 
 const initApp = () => {
-  
+    const htmWrapper = document.querySelector(".canvas-wrapper")
+
     const app = new PIXI.Application({
       width: window.innerWidth, 
       height: window.innerHeight, 
       backgroundColor: 0x101121, 
-      resolution: window.devicePixelRatio || 1,
-      resizeTo: document.querySelector(".canvas-wrapper"), 
+      resolution: 1,
     })
     document.querySelector(".canvas-wrapper").appendChild(app.view)
 
     const effect = new BackgroundEffect()
     app.stage.addChild(effect.container)
+
+    effect.container.scale.set(window.innerWidth / 900)
+
     effect.container.y = 200
     effect.container.x = window.innerWidth / 2
 }    
