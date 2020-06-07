@@ -3,7 +3,7 @@ import KEY_IMG from '../assets/az-fish.png'
 import { generatePositions } from './generatePositions'
 
 
-document.title = 'Ocean'
+document.title = 'DNO'
 
 class BackgroundEffect {
     constructor() {

@@ -94,7 +94,9 @@ import * as PIXI from 'pixi.js-legacy'
 
 //import { Shader } from './Shaders/Rainbow'
 //import { Shader } from './Shaders/Rainbow2'
-import { Shader } from './Shaders/Rainbow3'
+//import { Shader } from './Shaders/Rainbow3'
+
+
 
 //import { Shader } from './Shaders/Stars'
 //import { Shader } from './Shaders/Stars2'
@@ -102,6 +104,8 @@ import { Shader } from './Shaders/Rainbow3'
 //import { Shader } from './Shaders/StarSingle'
 //import { Shader } from './Shaders/StarSingle2'
 //import { Shader } from './Shaders/StarsStay'
+
+
 
 //import { Shader } from './Shaders/SphereIce'
 //import { Shader } from './Shaders/TextureWaves'
@@ -112,6 +116,10 @@ import { Shader } from './Shaders/Rainbow3'
 //import { Shader } from './Shaders/Water'
 //import { Shader } from './Shaders/Sky'
 //import { Shader } from './Shaders/Toroid'
+
+
+import { Shader } from './Shaders/Custom.js'
+
 
 const initApp = () => {
   var spector = new SPECTOR.Spector();
@@ -143,7 +151,7 @@ const initApp = () => {
 
   const animate = () => {
     requestAnimationFrame(animate)
-    Shader.uniforms.iTime += 0.02
+    Shader.uniforms.iTime += 0.2
   }
 
   
